@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyTools Global - Free Online Tools</title>
+<meta name="description" content="Free online image tools, calculators and everyday utilities. Fast, private and easy to use in your browser.">
+<meta name="keywords" content="image resizer, image compressor, age calculator, EMI calculator, loan calculator, free online tools">
+<meta name="theme-color" content="#2563eb">
+<link rel="canonical" href="/">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+  <div class="container nav">
+    <a class="brand" href="index.html">⚡ Daily<span>Tools</span></a>
+    <div class="controls">
+      <select id="country" aria-label="Country">
+        <option value="IN">🇮🇳 India</option><option value="US">🇺🇸 USA</option>
+        <option value="GB">🇬🇧 UK</option><option value="AE">🇦🇪 UAE</option>
+        <option value="CA">🇨🇦 Canada</option><option value="AU">🇦🇺 Australia</option>
+        <option value="DE">🇩🇪 Germany</option><option value="FR">🇫🇷 France</option>
+      </select>
+      <select id="language" aria-label="Language">
+        <option value="en">English</option><option value="hi">Hindi</option>
+      </select>
+      <input id="search" placeholder="Search tools..." aria-label="Search tools">
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero container">
+  <div class="badge">🌍 Global Edition</div>
+  <h1 id="heroTitle">All Your Daily Tools<br><span>In One Place</span></h1>
+  <p id="heroText">Fast, free and private — tools run directly in your browser.</p>
+</section>
+
+<section class="container">
+  <div id="toolGrid" class="grid">
+    <article class="tool-card" data-name="image resize" onclick="openTool('resize')"><div class="icon">🖼️</div><h2>Image Resizer</h2><p>Resize JPG, PNG and WebP images.</p></article>
+    <article class="tool-card" data-name="image compressor" onclick="openTool('compress')"><div class="icon">🗜️</div><h2>Image Compressor</h2><p>Reduce image file size in your browser.</p></article>
+    <article class="tool-card" data-name="age calculator" onclick="openTool('age')"><div class="icon">🎂</div><h2>Age Calculator</h2><p>Calculate exact age in years, months and days.</p></article>
+    <article class="tool-card" data-name="emi calculator loan" onclick="openTool('emi')"><div class="icon">💰</div><h2>EMI / Loan Calculator</h2><p>Calculate monthly payment, interest and total.</p></article>
+  </div>
+</section>
+
+<section id="workspace" class="container workspace hidden">
+<button class="back" onclick="closeTool()">← Back to all tools</button>
+
+<div id="tool-resize" class="panel hidden">
+<h2>Image Resizer</h2><input type="file" id="resizeInput" accept="image/*">
+<div class="two"><input id="rw" type="number" placeholder="Width (px)"><input id="rh" type="number" placeholder="Height (px)"></div>
+<label><input type="checkbox" id="keepRatio" checked> Keep aspect ratio</label>
+<img id="rPreview" class="preview hidden">
+<button onclick="doResize()">Resize & Download</button><canvas id="rCanvas" class="hidden"></canvas>
+</div>
+
+<div id="tool-compress" class="panel hidden">
+<h2>Image Compressor</h2><input type="file" id="cInput" accept="image/*">
+<label>Quality: <b id="qVal">70</b>% <input type="range" id="cQuality" min="10" max="95" value="70"></label>
+<div id="cStats" class="stats"></div><img id="cPreview" class="preview hidden">
+<button onclick="doCompress()">Compress & Download</button>
+</div>
+
+<div id="tool-age" class="panel hidden">
+<h2>Age Calculator</h2><input type="date" id="dob">
+<button onclick="calcAge()">Calculate Age</button><div id="ageResult" class="result"></div>
+</div>
+
+<div id="tool-emi" class="panel hidden">
+<h2>EMI / Loan Calculator</h2>
+<input id="loan" type="number" min="0" placeholder="Loan Amount">
+<input id="rate" type="number" min="0" step="0.01" placeholder="Interest % per year">
+<input id="tenure" type="number" min="1" placeholder="Tenure (months)">
+<button onclick="calcEMI()">Calculate EMI</button><div id="emiResult" class="result"></div>
+</div>
+</section>
+
+<section class="container info">
+<h2>Free online tools for everyday tasks</h2>
+<p>DailyTools Global provides browser-based utilities. Your selected images are processed locally by your browser and are not uploaded to a server by these tools.</p>
+</section>
+</main>
+
+<footer>
+<div class="container footer">
+<strong>⚡ DailyTools Global</strong>
+<nav><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Contact</a></nav>
+</div>
+<p>© <span id="year"></span> DailyTools Global. All rights reserved.</p>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
