@@ -1,95 +1,450 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DailyTools Global - Free Online Tools</title>
-<meta name="description" content="Free online image tools, calculators and everyday utilities. Fast, private and easy to use in your browser.">
-<meta name="keywords" content="image resizer, image compressor, age calculator, EMI calculator, loan calculator, free online tools">
-<meta name="theme-color" content="#2563eb">
-<link rel="canonical" href="/">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Tools Global - Free Online Tools</title>
+    
+    <style>
+        /* --- CSS DESIGN STYLE --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2563eb;
+            margin-bottom: 15px;
+            font-size: 22px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+
+        .warning-note {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #b45309;
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+        select, input[type="file"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0 16px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fff;
+            outline: none;
+        }
+
+        select:focus, input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .specs-grid input {
+            margin-top: 6px;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        /* Results Area Styles */
+        .result-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .result-box h3 {
+            font-size: 16px;
+            color: #1e3a8a;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 6px;
+        }
+
+        .main-age p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #059669;
+            text-align: center;
+        }
+
+        .live-timer p {
+            font-size: 16px;
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .live-timer span {
+            font-family: monospace;
+            font-size: 17px;
+            color: #2563eb;
+        }
+
+        .countdown-box p {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc2626;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<header class="header">
-  <div class="container nav">
-    <a class="brand" href="index.html">⚡ Daily<span>Tools</span></a>
-    <div class="controls">
-      <select id="country" aria-label="Country">
-        <option value="IN">🇮🇳 India</option><option value="US">🇺🇸 USA</option>
-        <option value="GB">🇬🇧 UK</option><option value="AE">🇦🇪 UAE</option>
-        <option value="CA">🇨🇦 Canada</option><option value="AU">🇦🇺 Australia</option>
-        <option value="DE">🇩🇪 Germany</option><option value="FR">🇫🇷 France</option>
-      </select>
-      <select id="language" aria-label="Language">
-        <option value="en">English</option><option value="hi">Hindi</option>
-      </select>
-      <input id="search" placeholder="Search tools..." aria-label="Search tools">
+
+    <header>🛠️ Daily Tools Global</header>
+
+    <div class="container">
+        
+        <!-- 1. GOVT FORM RESIZER -->
+        <div id="tool-gov-resize" class="panel">
+            <h2>🇮🇳 Govt Exam Form Photo & Signature Resizer</h2>
+            <div class="warning-note">⚠️ Note: Always verify the latest official notification before uploading your documents.</div>
+            
+            <label for="examSelect">Select Exam / Organization:</label>
+            <select id="examSelect" onchange="updateExamSpecs()">
+                <option value="custom">Custom / Other Requirements</option>
+                <option value="ssc">SSC (Staff Selection Commission)</option>
+                <option value="rrb">RRB (Railway Recruitment Board)</option>
+                <option value="banking">Banking (IBPS / SBI Type)</option>
+                <option value="upsc">UPSC</option>
+            </select>
+
+            <label for="docType">Select Document Type:</label>
+            <select id="docType" onchange="updateExamSpecs()">
+                <option value="photo">📸 Passport Size Photo</option>
+                <option value="sign">✍️ Signature</option>
+                <option value="thumb">👍 Thumb Impression</option>
+            </select>
+
+            <div class="specs-grid">
+                <div>
+                    <label>Width (px):</label>
+                    <input type="number" id="govWidth" value="350">
+                </div>
+                <div>
+                    <label>Height (px):</label>
+                    <input type="number" id="govHeight" value="450">
+                </div>
+                <div>
+                    <label>Max Size (KB):</label>
+                    <input type="number" id="govMaxSize" value="50">
+                </div>
+            </div>
+
+            <label>Upload Image:</label>
+            <input type="file" id="govInput" accept="image/*">
+            
+            <button onclick="processGovImage()">Resize & Download Ready Image</button>
+            <canvas id="govCanvas" class="hidden"></canvas>
+        </div>
+
+        <!-- 2. ADVANCED AGE CALCULATOR -->
+        <div id="tool-age-advanced" class="panel">
+            <h2>🎂 Advanced Age Calculator</h2>
+            <label for="advancedDob">Select Date of Birth (DOB):</label>
+            <input type="date" id="advancedDob">
+            <button onclick="calculateAdvancedAge()">Calculate Detailed Age</button>
+
+            <!-- Results Section -->
+            <div id="advancedAgeResult" class="hidden">
+                <div class="result-box main-age">
+                    <h3>Current Age</h3>
+                    <p id="exactAgeStr"></p>
+                </div>
+
+                <div class="result-box live-timer">
+                    <h3>Total Time Lived</h3>
+                    <p>🗓️ Total Days Lived: <span id="totalDays">0</span></p>
+                    <p>⏰ Total Hours Lived: <span id="totalHours">0</span></p>
+                    <p>⏱️ Total Minutes Lived: <span id="totalMinutes">0</span></p>
+                    <p>⚡ Total Seconds Lived: <span id="totalSeconds">0</span></p>
+                </div>
+
+                <div class="result-box countdown-box">
+                    <h3>🎉 Next Birthday Countdown</h3>
+                    <p id="nextBdayCountdown">0 Days, 0 Hours, 0 Minutes, 0 Seconds</p>
+                </div>
+
+                <div class="result-box table-box">
+                    <h3>📅 Upcoming 10 Birthdays</h3>
+                    <table id="upcomingBirthdaysTable">
+                        <thead>
+                            <tr>
+                                <th>Birthday</th>
+                                <th>Date</th>
+                                <th>Day</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </div>
-</header>
 
-<main>
-<section class="hero container">
-  <div class="badge">🌍 Global Edition</div>
-  <h1 id="heroTitle">All Your Daily Tools<br><span>In One Place</span></h1>
-  <p id="heroText">Fast, free and private — tools run directly in your browser.</p>
-</section>
+    <script>
+        // --- JAVASCRIPT LOGIC ---
 
-<section class="container">
-  <div id="toolGrid" class="grid">
-    <article class="tool-card" data-name="image resize" onclick="openTool('resize')"><div class="icon">🖼️</div><h2>Image Resizer</h2><p>Resize JPG, PNG and WebP images.</p></article>
-    <article class="tool-card" data-name="image compressor" onclick="openTool('compress')"><div class="icon">🗜️</div><h2>Image Compressor</h2><p>Reduce image file size in your browser.</p></article>
-    <article class="tool-card" data-name="age calculator" onclick="openTool('age')"><div class="icon">🎂</div><h2>Age Calculator</h2><p>Calculate exact age in years, months and days.</p></article>
-    <article class="tool-card" data-name="emi calculator loan" onclick="openTool('emi')"><div class="icon">💰</div><h2>EMI / Loan Calculator</h2><p>Calculate monthly payment, interest and total.</p></article>
-  </div>
-</section>
+        // Govt Resizer Specifications
+        const examRequirements = {
+            ssc: { photo: { w: 350, h: 450, size: 50 }, sign: { w: 350, h: 150, size: 20 }, thumb: { w: 250, h: 250, size: 20 } },
+            rrb: { photo: { w: 320, h: 240, size: 50 }, sign: { w: 140, h: 60, size: 20 }, thumb: { w: 200, h: 200, size: 20 } },
+            banking: { photo: { w: 350, h: 450, size: 50 }, sign: { w: 140, h: 60, size: 20 }, thumb: { w: 240, h: 240, size: 20 } },
+            upsc: { photo: { w: 350, h: 350, size: 300 }, sign: { w: 350, h: 350, size: 300 }, thumb: { w: 350, h: 350, size: 300 } }
+        };
 
-<section id="workspace" class="container workspace hidden">
-<button class="back" onclick="closeTool()">← Back to all tools</button>
+        function updateExamSpecs() {
+            const exam = document.getElementById('examSelect').value;
+            const doc = document.getElementById('docType').value;
+            
+            if (exam !== 'custom' && examRequirements[exam] && examRequirements[exam][doc]) {
+                const req = examRequirements[exam][doc];
+                document.getElementById('govWidth').value = req.w;
+                document.getElementById('govHeight').value = req.h;
+                document.getElementById('govMaxSize').value = req.size;
+            }
+        }
 
-<div id="tool-resize" class="panel hidden">
-<h2>Image Resizer</h2><input type="file" id="resizeInput" accept="image/*">
-<div class="two"><input id="rw" type="number" placeholder="Width (px)"><input id="rh" type="number" placeholder="Height (px)"></div>
-<label><input type="checkbox" id="keepRatio" checked> Keep aspect ratio</label>
-<img id="rPreview" class="preview hidden">
-<button onclick="doResize()">Resize & Download</button><canvas id="rCanvas" class="hidden"></canvas>
-</div>
+        function processGovImage() {
+            const fileInput = document.getElementById('govInput');
+            const width = parseInt(document.getElementById('govWidth').value);
+            const height = parseInt(document.getElementById('govHeight').value);
+            const maxSizeKB = parseInt(document.getElementById('govMaxSize').value);
+            const canvas = document.getElementById('govCanvas');
+            const ctx = canvas.getContext('2d');
 
-<div id="tool-compress" class="panel hidden">
-<h2>Image Compressor</h2><input type="file" id="cInput" accept="image/*">
-<label>Quality: <b id="qVal">70</b>% <input type="range" id="cQuality" min="10" max="95" value="70"></label>
-<div id="cStats" class="stats"></div><img id="cPreview" class="preview hidden">
-<button onclick="doCompress()">Compress & Download</button>
-</div>
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select an image file first.");
+                return;
+            }
 
-<div id="tool-age" class="panel hidden">
-<h2>Age Calculator</h2><input for="type="dob">Date of Birth : </label><input type="date" id="dob">
-<button onclick="calcAge()">Calculate Age</button><div id="ageResult" class="result"></div>
-</div>
+            const img = new Image();
+            img.src = URL.createObjectURL(fileInput.files);
+            img.onload = function() {
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
 
-<div id="tool-emi" class="panel hidden">
-<h2>EMI / Loan Calculator</h2>
-<input id="loan" type="number" min="0" placeholder="Loan Amount">
-<input id="rate" type="number" min="0" step="0.01" placeholder="Interest % per year">
-<input id="tenure" type="number" min="1" placeholder="Tenure (months)">
-<button onclick="calcEMI()">Calculate EMI</button><div id="emiResult" class="result"></div>
-</div>
-</section>
+                let quality = 0.95;
+                let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Compression loop based on Max KB size
+                while ((dataUrl.length * 0.75) / 1024 > maxSizeKB && quality > 0.1) {
+                    quality -= 0.05;
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                }
 
-<section class="container info">
-<h2>Free online tools for everyday tasks</h2>
-<p>DailyTools Global provides browser-based utilities. Your selected images are processed locally by your browser and are not uploaded to a server by these tools.</p>
-</section>
-</main>
+                const link = document.createElement('a');
+                link.download = `govt_form_${document.getElementById('docType').value}.jpg`;
+                link.href = dataUrl;
+                link.click();
+            };
+        }
 
-<footer>
-<div class="container footer">
-<strong>⚡ DailyTools Global</strong>
-<nav><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Contact</a></nav>
-</div>
-<p>© <span id="year"></span> DailyTools Global. All rights reserved.</p>
-</footer>
-<script src="script.js"></script>
+        // Advanced Age Calculator Logic
+        let countdownInterval;
+
+        function calculateAdvancedAge() {
+            const dobValue = document.getElementById('advancedDob').value;
+            if (!dobValue) {
+                alert("Please select your Date of Birth.");
+                return;
+            }
+
+            document.getElementById('advancedAgeResult').classList.remove('hidden');
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                const dob = new Date(dobValue);
+                const now = new Date();
+
+                if (dob > now) {
+                    document.getElementById('exactAgeStr').innerText = "DOB future mein nahi ho sakta!";
+                    clearInterval(countdownInterval);
+                    return;
+                }
+
+                // 1. Core Age Calculation
+                let years = now.getFullYear() - dob.getFullYear();
+                let months = now.getMonth() - dob.getMonth();
+                let days = now.getDate() - dob.getDate();
+
+                if (days < 0) {
+                    months--;
+                    days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                }
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                document.getElementById('exactAgeStr').innerText = `${years} Years, ${months} Months, ${days} Days`;
+
+                // 2. Total Time Metrics
+                const diffMs = now - dob;
+                const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const totalMinutes = Math.floor(diffMs / (1000 * 60));
+                const totalSeconds = Math.floor(diffMs / 1000);
+
+                document.getElementById('totalDays').innerText = totalDays.toLocaleString();
+                document.getElementById('totalHours').innerText = totalHours.toLocaleString();
+                document.getElementById('totalMinutes').innerText = totalMinutes.toLocaleString();
+                document.getElementById('totalSeconds').innerText = totalSeconds.toLocaleString();
+
+                // 3. Next Birthday Countdown
+                let nextBday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+                if (now > nextBday) {
+                    nextBday.setFullYear(now.getFullYear() + 1);
+                }
+                
+                const timeToBday = nextBday - now;
+                const bDays = Math.floor(timeToBday / (1000 * 60 * 60 * 24));
+                const bHours = Math.floor((timeToBday % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const bMins = Math.floor((timeToBday % (1000 * 60 * 60)) / (1000 * 60));
+                const bSecs = Math.floor((timeToBday % (1000 * 60)) / 1000);
+
+                document.getElementById('nextBdayCountdown').innerText = 
+                    `🎉 ${bDays} Days, ${bHours} Hours, ${bMins} Minutes, ${bSecs} Seconds`;
+
+            }, 1000);
+
+            // 4. Generate Upcoming 10 Birthdays Table
+            const dob = new Date(dobValue);
+            const now = new Date();
+            const tbody = document.querySelector('#upcomingBirthdaysTable tbody');
+            tbody.innerHTML = "";
+
+            let startYear = now.getFullYear();
+            let currentBdayThisYear = new Date(startYear, dob.getMonth(), dob.getDate());
+            if (now > currentBdayThisYear) startYear++;
+
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            for (let i = 1; i <= 10; i++) {
+                let targetYear = startYear + i - 1;
+                let futureBday = new Date(targetYear, dob.getMonth(), dob.getDate());
+                let age = targetYear - dob.getFullYear();
+
+                let suffix = "th";
+                if (age % 10 === 1 && age % 100 !== 11) suffix = "st";
+                else if (age % 10 === 2 && age % 100 !== 12) suffix = "nd";
+                else if (age % 10 === 3 && age % 100 !== 13) suffix = "rd";
+
+                let row = `<tr>
+                    <td><b>${age}${suffix} Birthday</b></td>
+                    <td>${futureBday.getDate()} ${monthNames[futureBday.getMonth()]} ${targetYear}</td>
+                    <td>${dayNames[futureBday.getDay()]}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+        }
+    </script>
 </body>
 </html>
