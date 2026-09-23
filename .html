@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyTools - Free Image Tools, Calculators & More</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,sans-serif}.glass{backdrop-filter:blur(12px)}</style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-white/80 glass border-b">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-extrabold">⚡ Daily<span class="text-blue-600">Tools</span></h1>
+    <input id="search" placeholder="Search tools..." class="px-4 py-2 rounded-full border bg-slate-100 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500">
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="max-w-6xl mx-auto px-4 py-10 text-center">
+  <h2 class="text-4xl font-extrabold leading-tight">All Your Daily Tools<br><span class="text-blue-600">In One Place</span></h2>
+  <p class="text-slate-500 mt-3">Fast, Free & 100% Private - Works in your browser</p>
+</section>
+
+<!-- Tool Grid -->
+<div id="toolGrid" class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 pb-10">
+  <div data-name="image resize" onclick="openTool('resize')" class="tool-card bg-white p-6 rounded-2xl shadow-sm border hover:shadow-lg hover:-translate-y-1 cursor-pointer transition">
+    <div class="text-3xl">🖼️</div><h3 class="font-bold mt-3">Image Resizer</h3><p class="text-sm text-slate-500">Resize JPG, PNG in seconds</p>
+  </div>
+  <div data-name="image compressor" onclick="openTool('compress')" class="tool-card bg-white p-6 rounded-2xl shadow-sm border hover:shadow-lg hover:-translate-y-1 cursor-pointer transition">
+    <div class="text-3xl">🗜️</div><h3 class="font-bold mt-3">Image Compressor</h3><p class="text-sm text-slate-500">Reduce size without losing quality</p>
+  </div>
+  <div data-name="age calculator" onclick="openTool('age')" class="tool-card bg-white p-6 rounded-2xl shadow-sm border hover:shadow-lg hover:-translate-y-1 cursor-pointer transition">
+    <div class="text-3xl">🎂</div><h3 class="font-bold mt-3">Age Calculator</h3><p class="text-sm text-slate-500">Exact age in Y/M/D</p>
+  </div>
+  <div data-name="emi calculator loan" onclick="openTool('emi')" class="tool-card bg-white p-6 rounded-2xl shadow-sm border hover:shadow-lg hover:-translate-y-1 cursor-pointer transition">
+    <div class="text-3xl">💰</div><h3 class="font-bold mt-3">EMI Calculator</h3><p class="text-sm text-slate-500">Loan EMI, Interest, Total</p>
+  </div>
+</div>
+
+<!-- Tool Workspace -->
+<div id="workspace" class="max-w-4xl mx-auto px-4 pb-20 hidden">
+  <button onclick="closeTool()" class="mb-4 px-4 py-2 bg-slate-900 text-white rounded-full text-sm">← Back to all tools</button>
+
+  <!-- RESIZE TOOL -->
+  <div id="tool-resize" class="tool-panel bg-white rounded-3xl p-6 md:p-8 shadow border hidden">
+    <h3 class="text-2xl font-bold">Image Resizer</h3>
+    <input type="file" id="resizeInput" accept="image/*" class="mt-4 block w-full text-sm border rounded-lg p-2">
+    <div class="grid grid-cols-2 gap-4 mt-4">
+      <input id="rw" type="number" placeholder="Width (px)" class="border rounded-xl p-3">
+      <input id="rh" type="number" placeholder="Height (px)" class="border rounded-xl p-3">
+    </div>
+    <canvas id="rCanvas" class="hidden"></canvas>
+    <img id="rPreview" class="mt-4 max-h-80 rounded-xl hidden">
+    <button onclick="doResize()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Resize & Download</button>
+  </div>
+
+  <!-- COMPRESS TOOL -->
+  <div id="tool-compress" class="tool-panel bg-white rounded-3xl p-6 md:p-8 shadow border hidden">
+    <h3 class="text-2xl font-bold">Image Compressor</h3>
+    <input type="file" id="cInput" accept="image/*" class="mt-4 block w-full text-sm border rounded-lg p-2">
+    <label class="mt-4 block">Quality: <span id="qVal">70</span>% <input type="range" id="cQuality" min="10" max="90" value="70" class="w-full"></label>
+    <div id="cStats" class="text-sm text-slate-500 mt-2"></div>
+    <img id="cPreview" class="mt-4 max-h-80 rounded-xl hidden">
+    <button onclick="doCompress()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Compress & Download</button>
+  </div>
+
+  <!-- AGE TOOL -->
+  <div id="tool-age" class="tool-panel bg-white rounded-3xl p-6 md:p-8 shadow border hidden">
+    <h3 class="text-2xl font-bold">🎂 Age Calculator</h3>
+    <p class="text-sm text-slate-500 mt-1">Calculate your exact age, total time lived and next 10 birthdays.</p>
+    <label for="dob" class="block font-semibold mt-5 mb-2">Date of Birth (DOB)</label>
+    <input type="date" id="dob" class="border rounded-xl p-3 w-full">
+    <div class="mt-4 rounded-xl bg-slate-50 border p-3"><span class="font-semibold">Today's Date:</span> <span id="todayDate" class="text-blue-600 font-semibold"></span></div>
+    <button onclick="calcAge()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold">Calculate Age</button>
+    <div id="ageError" class="hidden mt-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm"></div>
+    <div id="ageResult" class="mt-6 hidden"></div>
+  </div>
+
+  <!-- EMI TOOL -->
+  <div id="tool-emi" class="tool-panel bg-white rounded-3xl p-6 md:p-8 shadow border hidden">
+    <h3 class="text-2xl font-bold">EMI Calculator</h3>
+    <div class="grid gap-4 mt-4">
+      <input id="loan" type="number" placeholder="Loan Amount (₹)" class="border rounded-xl p-3">
+      <input id="rate" type="number" placeholder="Interest % per year" class="border rounded-xl p-3">
+      <input id="tenure" type="number" placeholder="Tenure (months)" class="border rounded-xl p-3">
+    </div>
+    <button onclick="calcEMI()" class="mt-4 w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Calculate EMI</button>
+    <div id="emiResult" class="mt-6 bg-slate-50 p-4 rounded-xl"></div>
+  </div>
+</div>
+
+<script>
+// Search
+document.getElementById('search').addEventListener('input', e=>{
+  let v=e.target.value.toLowerCase();
+  document.querySelectorAll('.tool-card').forEach(c=> c.style.display=c.dataset.name.includes(v)?'block':'none')
+});
+function openTool(id){
+  document.getElementById('toolGrid').classList.add('hidden');
+  document.getElementById('workspace').classList.remove('hidden');
+  document.querySelectorAll('.tool-panel').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('tool-'+id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function closeTool(){
+  document.getElementById('workspace').classList.add('hidden');
+  document.getElementById('toolGrid').classList.remove('hidden');
+}
+// Resize
+let rImg=new Image();
+document.getElementById('resizeInput').addEventListener('change', e=>{
+  let file=e.target.files[0]; if(!file) return;
+  rImg.src=URL.createObjectURL(file);
+  rImg.onload=()=>{ document.getElementById('rw').value=rImg.width; document.getElementById('rh').value=rImg.height; document.getElementById('rPreview').src=rImg.src; document.getElementById('rPreview').classList.remove('hidden'); }
+});
+function doResize(){
+  let w=+document.getElementById('rw').value, h=+document.getElementById('rh').value;
+  let c=document.getElementById('rCanvas'); c.width=w; c.height=h;
+  c.getContext('2d').drawImage(rImg,0,0,w,h);
+  let a=document.createElement('a'); a.download='resized.png'; a.href=c.toDataURL(); a.click();
+}
+// Compress
+let cImg=new Image(), cFile;
+document.getElementById('cQuality').addEventListener('input', e=> document.getElementById('qVal').innerText=e.target.value);
+document.getElementById('cInput').addEventListener('change', e=>{
+  cFile=e.target.files[0]; if(!cFile) return;
+  cImg.src=URL.createObjectURL(cFile);
+  cImg.onload=()=>{ document.getElementById('cPreview').src=cImg.src; document.getElementById('cPreview').classList.remove('hidden'); document.getElementById('cStats').innerText=`Original: ${(cFile.size/1024).toFixed(1)} KB`; }
+});
+function doCompress(){
+  let q=document.getElementById('cQuality').value/100;
+  let canvas=document.createElement('canvas'); canvas.width=cImg.width; canvas.height=cImg.height;
+  canvas.getContext('2d').drawImage(cImg,0,0);
+  canvas.toBlob(blob=>{
+    document.getElementById('cStats').innerText+=` → Compressed: ${(blob.size/1024).toFixed(1)} KB`;
+    let a=document.createElement('a'); a.download='compressed.jpg'; a.href=URL.createObjectURL(blob); a.click();
+  }, 'image/jpeg', q);
+}
+// Age Calculator
+function formatDate(date){
+  return date.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+}
+function formatShortDate(date){
+  return date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function updateTodayDate(){ document.getElementById('todayDate').textContent=formatDate(new Date()); }
+updateTodayDate(); setInterval(updateTodayDate,60000); document.getElementById('dob').max=new Date().toISOString().split('T')[0];
+function daysInMonth(year, month){ return new Date(year, month+1, 0).getDate(); }
+function isLeapYear(year){ return year%4===0 && (year%100!==0 || year%400===0); }
+function birthdayForYear(dob, year){
+  let month=dob.getMonth(), day=dob.getDate();
+  if(month===1 && day===29 && !isLeapYear(year)) day=28;
+  return new Date(year,month,day);
+}
+function exactYMD(dob, now){
+  let y=now.getFullYear()-dob.getFullYear();
+  let m=now.getMonth()-dob.getMonth();
+  let d=now.getDate()-dob.getDate();
+  if(d<0){ m--; d+=daysInMonth(now.getFullYear(), now.getMonth()-1); }
+  if(m<0){ y--; m+=12; }
+  return {y,m,d};
+}
+function calcAge(){
+  const input=document.getElementById('dob').value;
+  const error=document.getElementById('ageError'); const result=document.getElementById('ageResult');
+  error.classList.add('hidden'); result.classList.add('hidden');
+  if(!input){ error.textContent='Please select your Date of Birth (DOB).'; error.classList.remove('hidden'); return; }
+  const [yy,mm,dd]=input.split('-').map(Number);
+  const dob=new Date(yy,mm-1,dd); const now=new Date();
+  if(dob>now){ error.textContent='Date of Birth cannot be in the future.'; error.classList.remove('hidden'); return; }
+  const age=exactYMD(dob,now);
+  const totalMs=now-dob;
+  const totalSeconds=Math.floor(totalMs/1000);
+  const totalMinutes=Math.floor(totalSeconds/60);
+  const totalHours=Math.floor(totalMinutes/60);
+  const totalDays=Math.floor(totalHours/24);
+  let rows='';
+  let firstYear=now.getFullYear();
+  let first=birthdayForYear(dob,firstYear);
+  if(first<=new Date(now.getFullYear(),now.getMonth(),now.getDate())) firstYear++;
+  for(let i=0;i<10;i++){
+    const year=firstYear+i; const bday=birthdayForYear(dob,year);
+    const turningAge=year-dob.getFullYear();
+    rows+=`<tr class="border-b last:border-0"><td class="p-3 font-semibold">${i+1}</td><td class="p-3">${formatShortDate(bday)}</td><td class="p-3">${bday.toLocaleDateString('en-IN',{weekday:'long'})}</td><td class="p-3 text-blue-600 font-bold">${turningAge}</td></tr>`;
+  }
+  result.innerHTML=`
+    <div class="rounded-2xl bg-blue-50 border border-blue-100 p-5 text-center">
+      <div class="text-sm text-slate-500">Your exact age</div>
+      <div class="text-3xl md:text-4xl font-extrabold text-blue-600 mt-1">${age.y} Years, ${age.m} Months, ${age.d} Days</div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalDays.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Days</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalHours.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Hours</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalMinutes.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Minutes</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalSeconds.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Seconds</div></div>
+    </div>
+    <div class="mt-7"><h4 class="text-xl font-bold mb-3">🎉 Next 10 Birthdays</h4>
+      <div class="overflow-x-auto border rounded-2xl"><table class="w-full text-sm text-left min-w-[560px]"><thead class="bg-slate-50"><tr><th class="p-3">#</th><th class="p-3">Date</th><th class="p-3">Day</th><th class="p-3">Turning Age</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+    <p class="text-xs text-slate-500 mt-4">Total time lived is calculated from your DOB at local midnight because no birth time is entered. For 29 February birthdays, non-leap-year birthdays are shown on 28 February.</p>`;
+  result.classList.remove('hidden');
+}
+// EMI
+function calcEMI(){
+  let P=+document.getElementById('loan').value, annual=+document.getElementById('rate').value, n=+document.getElementById('tenure').value;
+  let r=annual/12/100; let emi=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  let total=emi*n, interest=total-P;
+  document.getElementById('emiResult').innerHTML=`Monthly EMI: <b>₹${emi.toFixed(2)}</b><br>Total Interest: ₹${interest.toFixed(2)}<br>Total Payable: ₹${total.toFixed(2)}`;
+}
+</script>
+</body>
+</html>
