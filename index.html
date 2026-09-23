@@ -68,12 +68,22 @@
 
   <!-- AGE TOOL -->
   <div id="tool-age" class="tool-panel bg-white rounded-3xl p-6 md:p-8 shadow border hidden">
-    <h3 class="text-2xl font-bold">🎂 Age Calculator</h3>
-    <p class="text-sm text-slate-500 mt-1">Calculate your exact age, total time lived and next 10 birthdays.</p>
-    <label for="dob" class="block font-semibold mt-5 mb-2">Date of Birth (DOB)</label>
-    <input type="date" id="dob" class="border rounded-xl p-3 w-full">
-    <div class="mt-4 rounded-xl bg-slate-50 border p-3"><span class="font-semibold">Today's Date:</span> <span id="todayDate" class="text-blue-600 font-semibold"></span></div>
-    <button onclick="calcAge()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold">Calculate Age</button>
+    <h3 class="text-2xl font-bold">🎂 Advanced Age Calculator</h3>
+    <p class="text-sm text-slate-500 mt-1">Calculate exact age, upcoming birthdays, zodiac sign, and total life time.</p>
+
+    <div class="grid gap-4 md:grid-cols-2 mt-5">
+      <div>
+        <label for="dob" class="block font-semibold mb-2">Date of Birth (DOB)</label>
+        <input type="date" id="dob" class="border rounded-xl p-3 w-full">
+      </div>
+      <div>
+        <label for="ageAsOf" class="block font-semibold mb-2">Calculate age as of</label>
+        <input type="date" id="ageAsOf" class="border rounded-xl p-3 w-full">
+      </div>
+    </div>
+
+    <div class="mt-4 rounded-xl bg-slate-50 border p-3"><span class="font-semibold">Date today:</span> <span id="todayDate" class="text-blue-600 font-semibold"></span></div>
+    <button onclick="calcAge()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold">Calculate Advanced Age</button>
     <div id="ageError" class="hidden mt-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm"></div>
     <div id="ageResult" class="mt-6 hidden"></div>
   </div>
@@ -113,10 +123,11 @@ let rImg=new Image();
 document.getElementById('resizeInput').addEventListener('change', e=>{
   let file=e.target.files[0]; if(!file) return;
   rImg.src=URL.createObjectURL(file);
-  rImg.onload=()=>{ document.getElementById('rw').value=rImg.width; document.getElementById('rh').value=rImg.height; document.getElementById('rPreview').src=rImg.src; document.getElementById('rPreview').classList.remove('hidden'); }
+  rImg.onload=()=>{ document.getElementById('rw').value=rImg.width; document.getElementById('rh').value=rImg.height; document.getElementById('rPreview').src=rImg.src; document.getElementById('rPreview').classList.remove('hidden'); };
 });
 function doResize(){
   let w=+document.getElementById('rw').value, h=+document.getElementById('rh').value;
+  if(!rImg.src || w<1 || h<1) return alert('Choose an image and enter valid dimensions.');
   let c=document.getElementById('rCanvas'); c.width=w; c.height=h;
   c.getContext('2d').drawImage(rImg,0,0,w,h);
   let a=document.createElement('a'); a.download='resized.png'; a.href=c.toDataURL(); a.click();
@@ -127,9 +138,10 @@ document.getElementById('cQuality').addEventListener('input', e=> document.getEl
 document.getElementById('cInput').addEventListener('change', e=>{
   cFile=e.target.files[0]; if(!cFile) return;
   cImg.src=URL.createObjectURL(cFile);
-  cImg.onload=()=>{ document.getElementById('cPreview').src=cImg.src; document.getElementById('cPreview').classList.remove('hidden'); document.getElementById('cStats').innerText=`Original: ${(cFile.size/1024).toFixed(1)} KB`; }
+  cImg.onload=()=>{ document.getElementById('cPreview').src=cImg.src; document.getElementById('cPreview').classList.remove('hidden'); document.getElementById('cStats').innerText=`Original: ${(cFile.size/1024).toFixed(1)} KB`; };
 });
 function doCompress(){
+  if(!cFile) return alert('Choose an image first.');
   let q=document.getElementById('cQuality').value/100;
   let canvas=document.createElement('canvas'); canvas.width=cImg.width; canvas.height=cImg.height;
   canvas.getContext('2d').drawImage(cImg,0,0);
@@ -138,68 +150,196 @@ function doCompress(){
     let a=document.createElement('a'); a.download='compressed.jpg'; a.href=URL.createObjectURL(blob); a.click();
   }, 'image/jpeg', q);
 }
-// Age Calculator
+
+// Advanced Age Calculator
 function formatDate(date){
   return date.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
 }
 function formatShortDate(date){
   return date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
 }
-function updateTodayDate(){ document.getElementById('todayDate').textContent=formatDate(new Date()); }
-updateTodayDate(); setInterval(updateTodayDate,60000); document.getElementById('dob').max=new Date().toISOString().split('T')[0];
-function daysInMonth(year, month){ return new Date(year, month+1, 0).getDate(); }
-function isLeapYear(year){ return year%4===0 && (year%100!==0 || year%400===0); }
-function birthdayForYear(dob, year){
-  let month=dob.getMonth(), day=dob.getDate();
-  if(month===1 && day===29 && !isLeapYear(year)) day=28;
-  return new Date(year,month,day);
+function formatLongDate(date){
+  return date.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 }
-function exactYMD(dob, now){
-  let y=now.getFullYear()-dob.getFullYear();
-  let m=now.getMonth()-dob.getMonth();
-  let d=now.getDate()-dob.getDate();
-  if(d<0){ m--; d+=daysInMonth(now.getFullYear(), now.getMonth()-1); }
-  if(m<0){ y--; m+=12; }
-  return {y,m,d};
+function updateTodayDate(){
+  const today = new Date();
+  document.getElementById('todayDate').textContent = formatDate(today);
+  document.getElementById('ageAsOf').value = today.toISOString().split('T')[0];
+}
+updateTodayDate(); setInterval(updateTodayDate,60000);
+document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+
+document.getElementById('ageAsOf').max = new Date().toISOString().split('T')[0];
+
+function daysInMonth(year, month){
+  return new Date(year, month + 1, 0).getDate();
+}
+function isLeapYear(year){
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+function getAgeBreakdown(dob, asOf){
+  let years = asOf.getFullYear() - dob.getFullYear();
+  let months = asOf.getMonth() - dob.getMonth();
+  let days = asOf.getDate() - dob.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const prevMonth = (asOf.getMonth() === 0) ? 11 : asOf.getMonth() - 1;
+    const prevYear = (asOf.getMonth() === 0) ? asOf.getFullYear() - 1 : asOf.getFullYear();
+    days += daysInMonth(prevYear, prevMonth);
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { y: Math.max(0, years), m: Math.max(0, months), d: Math.max(0, days) };
+}
+function getBirthdayForYear(dob, year){
+  let month = dob.getMonth();
+  let day = dob.getDate();
+  if (month === 1 && day === 29 && !isLeapYear(year)) day = 28;
+  return new Date(year, month, day);
+}
+function getZodiacSign(dob){
+  const m = dob.getMonth() + 1;
+  const d = dob.getDate();
+  const signs = [
+    {name:'Capricorn', start:[12,22], end:[1,19]},
+    {name:'Aquarius', start:[1,20], end:[2,18]},
+    {name:'Pisces', start:[2,19], end:[3,20]},
+    {name:'Aries', start:[3,21], end:[4,19]},
+    {name:'Taurus', start:[4,20], end:[5,20]},
+    {name:'Gemini', start:[5,21], end:[6,20]},
+    {name:'Cancer', start:[6,21], end:[7,22]},
+    {name:'Leo', start:[7,23], end:[8,22]},
+    {name:'Virgo', start:[8,23], end:[9,22]},
+    {name:'Libra', start:[9,23], end:[10,22]},
+    {name:'Scorpio', start:[10,23], end:[11,21]},
+    {name:'Sagittarius', start:[11,22], end:[12,21]}
+  ];
+
+  for (const sign of signs) {
+    const [sMonth, sDay] = sign.start;
+    const [eMonth, eDay] = sign.end;
+    const start = new Date(2000, sMonth - 1, sDay);
+    const end = new Date(2000, eMonth - 1, eDay);
+    const birth = new Date(2000, m - 1, d);
+    if (birth >= start && birth <= end) return sign.name;
+  }
+  return 'Capricorn';
+}
+function getLifeStage(ageYears){
+  if (ageYears < 13) return 'Child';
+  if (ageYears < 20) return 'Teen';
+  if (ageYears < 40) return 'Adult';
+  if (ageYears < 60) return 'Middle-aged';
+  return 'Senior';
 }
 function calcAge(){
-  const input=document.getElementById('dob').value;
-  const error=document.getElementById('ageError'); const result=document.getElementById('ageResult');
-  error.classList.add('hidden'); result.classList.add('hidden');
-  if(!input){ error.textContent='Please select your Date of Birth (DOB).'; error.classList.remove('hidden'); return; }
-  const [yy,mm,dd]=input.split('-').map(Number);
-  const dob=new Date(yy,mm-1,dd); const now=new Date();
-  if(dob>now){ error.textContent='Date of Birth cannot be in the future.'; error.classList.remove('hidden'); return; }
-  const age=exactYMD(dob,now);
-  const totalMs=now-dob;
-  const totalSeconds=Math.floor(totalMs/1000);
-  const totalMinutes=Math.floor(totalSeconds/60);
-  const totalHours=Math.floor(totalMinutes/60);
-  const totalDays=Math.floor(totalHours/24);
-  let rows='';
-  let firstYear=now.getFullYear();
-  let first=birthdayForYear(dob,firstYear);
-  if(first<=new Date(now.getFullYear(),now.getMonth(),now.getDate())) firstYear++;
-  for(let i=0;i<10;i++){
-    const year=firstYear+i; const bday=birthdayForYear(dob,year);
-    const turningAge=year-dob.getFullYear();
-    rows+=`<tr class="border-b last:border-0"><td class="p-3 font-semibold">${i+1}</td><td class="p-3">${formatShortDate(bday)}</td><td class="p-3">${bday.toLocaleDateString('en-IN',{weekday:'long'})}</td><td class="p-3 text-blue-600 font-bold">${turningAge}</td></tr>`;
+  const input = document.getElementById('dob').value;
+  const asOfInput = document.getElementById('ageAsOf').value;
+  const error = document.getElementById('ageError');
+  const result = document.getElementById('ageResult');
+
+  error.classList.add('hidden');
+  result.classList.add('hidden');
+
+  if (!input) {
+    error.textContent = 'Please select your Date of Birth (DOB).';
+    error.classList.remove('hidden');
+    return;
   }
-  result.innerHTML=`
+
+  const [yy, mm, dd] = input.split('-').map(Number);
+  const dob = new Date(yy, mm - 1, dd);
+  const now = asOfInput ? new Date(asOfInput + 'T00:00:00') : new Date();
+
+  if (dob > now) {
+    error.textContent = 'Date of Birth cannot be later than the selected date.';
+    error.classList.remove('hidden');
+    return;
+  }
+
+  const age = getAgeBreakdown(dob, now);
+  const ageYears = age.y;
+  const ageMonths = age.y * 12 + age.m;
+  const totalDays = Math.floor((now - dob) / (1000 * 60 * 60 * 24));
+  const totalWeeks = Math.floor(totalDays / 7);
+  const totalHours = Math.floor((now - dob) / (1000 * 60 * 60));
+  const totalMinutes = Math.floor((now - dob) / (1000 * 60));
+  const totalSeconds = Math.floor((now - dob) / 1000);
+
+  let nextBirthday = getBirthdayForYear(dob, now.getFullYear());
+  if (nextBirthday < now) nextBirthday = getBirthdayForYear(dob, now.getFullYear() + 1);
+  const daysUntilBirthday = Math.ceil((nextBirthday - now) / (1000 * 60 * 60 * 24));
+
+  const zodiac = getZodiacSign(dob);
+  const lifeStage = getLifeStage(ageYears);
+  const dayOfWeek = dob.toLocaleDateString('en-IN', { weekday: 'long' });
+
+  let rows = '';
+  let nextYear = now.getFullYear();
+  let next = getBirthdayForYear(dob, nextYear);
+  if (next <= now) nextYear += 1;
+  for (let i = 0; i < 10; i++) {
+    const year = nextYear + i;
+    const bday = getBirthdayForYear(dob, year);
+    const turningAge = year - dob.getFullYear();
+    rows += `<tr class="border-b last:border-0"><td class="p-3 font-semibold">${i + 1}</td><td class="p-3">${formatShortDate(bday)}</td><td class="p-3">${turningAge}</td></tr>`;
+  }
+
+  result.innerHTML = `
     <div class="rounded-2xl bg-blue-50 border border-blue-100 p-5 text-center">
-      <div class="text-sm text-slate-500">Your exact age</div>
+      <div class="text-sm text-slate-500">Exact age</div>
       <div class="text-3xl md:text-4xl font-extrabold text-blue-600 mt-1">${age.y} Years, ${age.m} Months, ${age.d} Days</div>
+      <div class="mt-2 text-sm text-slate-600">Born on ${formatLongDate(dob)} • ${lifeStage} • ${zodiac}</div>
     </div>
+
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
       <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalDays.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Days</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalWeeks.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Weeks</div></div>
       <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalHours.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Hours</div></div>
-      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalMinutes.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Minutes</div></div>
       <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-2xl font-bold">${totalSeconds.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Seconds</div></div>
     </div>
-    <div class="mt-7"><h4 class="text-xl font-bold mb-3">🎉 Next 10 Birthdays</h4>
-      <div class="overflow-x-auto border rounded-2xl"><table class="w-full text-sm text-left min-w-[560px]"><thead class="bg-slate-50"><tr><th class="p-3">#</th><th class="p-3">Date</th><th class="p-3">Day</th><th class="p-3">Turning Age</th></tr></thead><tbody>${rows}</tbody></table></div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-xl font-bold">${ageMonths.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Total Months</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-xl font-bold">${totalMinutes.toLocaleString('en-IN')}</div><div class="text-xs text-slate-500 mt-1">Minutes Lived</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-xl font-bold">${daysUntilBirthday}</div><div class="text-xs text-slate-500 mt-1">Days to Next Birthday</div></div>
+      <div class="bg-slate-50 border rounded-xl p-4 text-center"><div class="text-xl font-bold">${dayOfWeek}</div><div class="text-xs text-slate-500 mt-1">Birth Weekday</div></div>
     </div>
-    <p class="text-xs text-slate-500 mt-4">Total time lived is calculated from your DOB at local midnight because no birth time is entered. For 29 February birthdays, non-leap-year birthdays are shown on 28 February.</p>`;
+
+    <div class="mt-7 grid md:grid-cols-2 gap-5">
+      <div class="bg-slate-50 border rounded-2xl p-4">
+        <h4 class="text-lg font-bold mb-2">🎉 Next Birthday</h4>
+        <p class="text-2xl font-extrabold text-blue-600">${formatShortDate(nextBirthday)}</p>
+        <p class="text-sm text-slate-500 mt-1">${daysUntilBirthday === 0 ? 'Today is your birthday!' : `${daysUntilBirthday} days left`}</p>
+      </div>
+      <div class="bg-slate-50 border rounded-2xl p-4">
+        <h4 class="text-lg font-bold mb-2">🔮 Extra Details</h4>
+        <p class="text-sm text-slate-600">Zodiac: <span class="font-semibold">${zodiac}</span></p>
+        <p class="text-sm text-slate-600">Life stage: <span class="font-semibold">${lifeStage}</span></p>
+        <p class="text-sm text-slate-600">Age as of: <span class="font-semibold">${formatDate(now)}</span></p>
+      </div>
+    </div>
+
+    <div class="mt-7">
+      <h4 class="text-xl font-bold mb-3">🎁 Next 10 Birthdays</h4>
+      <div class="overflow-x-auto border rounded-2xl">
+        <table class="w-full text-sm text-left min-w-[420px]">
+          <thead class="bg-slate-50">
+            <tr><th class="p-3">#</th><th class="p-3">Date</th><th class="p-3">Age</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="text-xs text-slate-500 mt-4">This advanced calculator uses your selected comparison date and shows exact age in years, months, and days along with major life milestones and upcoming birthdays.</p>
+  `;
+
   result.classList.remove('hidden');
 }
 // EMI
